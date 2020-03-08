@@ -1,18 +1,35 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <LiquidCrystal.h>
-// const int rs = 12, en = 11, d4 = 6, d5 = 5, d6 = 4, d7 = 3;
+#include "Temperature.h"
 
 // constant for temperature
-#define ONE_WIRE_BUS 26
+
 int outlet = 13;
 
+
 // initialize libraries
+#define ONE_WIRE_BUS 26
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
+
+
 const int rs = 19, en = 23, d4 = 27, d5 = 16, d6 = 17, d7 = 25;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+
+Temperature temp(lcd, sensors);
+
+
+//#include <stdlib.h> // for malloc and free
+//void* operator new(size_t size) { return malloc(size); } 
+//void operator delete(void* ptr) { free(ptr); }
+
+// const int rs = 12, en = 11, d4 = 6, d5 = 5, d6 = 4, d7 = 3;
+
+
+
 
 
 // temperature vars
@@ -24,14 +41,17 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 //bool reprint = false;
 
 // ph vars
-const int analogInPin = 36;
-int sensorValue = 0;
-unsigned long int avgValue;
-float b;
-int buf[10], temp;
+//const int analogInPin = 36;
+//int sensorValue = 0;
+//unsigned long int avgValue;
+//float b;
+//int buf[10], temp;
 
 //outlet vars
 float temporary = 74.00;
+//Temperature* temp;
+
+
 
 void setup(void) {
   Serial.begin(115200);
@@ -42,9 +62,7 @@ void setup(void) {
 
   pinMode(13, OUTPUT);
   
-//  Temperature temp;
-
-  Temperature temp = new Temperature();
+//  temp = new Temperature();
 }
 
 void loop(void) {
@@ -91,13 +109,13 @@ void loop(void) {
 //  }
 //}
 
-void ATORelay() {
-    if (secondF <= 73){
-      digitalWrite(outlet, HIGH);
-    } else {
-      digitalWrite(outlet, LOW);
-    }
-}
+//void ATORelay() {
+//    if (secondF <= 73){
+//      digitalWrite(outlet, HIGH);
+//    } else {
+//      digitalWrite(outlet, LOW);
+//    }
+//}
 
 //void phAndRoomTempReading() {
 //  // read the input on analog pin 0:

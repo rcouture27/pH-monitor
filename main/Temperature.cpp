@@ -1,30 +1,18 @@
-class Temperature {
-  private:
-    float firstC = 0;
-    float firstF = 0;
-    float secondC = 0;
-    float secondF = 0; 
-    int count = 0;
-    bool reprint = false;
-
-  public:
-    void temperatureDisplay();
-    void setFistTemp(); 
-    void setSecondTemp();
-    void updateTemperature();
-}
+#include "Temperature.h"
+//#include <LiquidCrystal.h>
 
 // constructor
-Temperature::Temperature() {
-  
+Temperature::Temperature(LiquidCrystal& lcd, DallasTemperature& sensors){
+  this->lcd = lcd;
+  this->sensors = sensors;
 }
 
 void Temperature::temperatureDisplay() {
   count++;
   if (count == 1 || reprint) {
-    printToLCD();
+    Temperature::printToLCD();
   }
-  setFirstTemp();
+  Temperature::setFirstTemp();
   delay(1000);
   setSecondTemp();
   updateTemperature();
