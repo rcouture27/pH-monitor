@@ -2,7 +2,7 @@
 //#include <LiquidCrystal.h>
 
 // constructor
-Temperature::Temperature(LiquidCrystal& lcd, DallasTemperature& sensors){
+Temperature::Temperature(LiquidCrystal* lcd, DallasTemperature* sensors){
   this->lcd = lcd;
   this->sensors = sensors;
 }
@@ -19,27 +19,27 @@ void Temperature::temperatureDisplay() {
 }
 
 void Temperature::printToLCD() {
-  lcd.print("F: " + String(firstF));
-  lcd.setCursor(0, 1);
-  lcd.print("C: " + String(firstC));
+  lcd->print("F: " + String(firstF));
+  lcd->setCursor(0, 1);
+  lcd->print("C: " + String(firstC));
 }
 
 
 void Temperature::setFirstTemp() {
-  sensors.requestTemperatures();
-  firstC = sensors.getTempCByIndex(0);
-  firstF = sensors.toFahrenheit(firstC);
+  sensors->requestTemperatures();
+  firstC = sensors->getTempCByIndex(0);
+  firstF = sensors->toFahrenheit(firstC);
 }
 
 void Temperature::setSecondTemp() {
-  sensors.requestTemperatures();
-  secondC = sensors.getTempCByIndex(0);
-  secondF = sensors.toFahrenheit(secondC);
+  sensors->requestTemperatures();
+  secondC = sensors->getTempCByIndex(0);
+  secondF = sensors->toFahrenheit(secondC);
 }
 
 void Temperature::updateTemperature() {
   if (firstF != secondF) {
-    lcd.clear();
+    lcd->clear();
     reprint = true;
   } else {
     reprint = false;

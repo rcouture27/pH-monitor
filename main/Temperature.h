@@ -13,11 +13,11 @@ class Temperature {
     float secondF = 0; 
     int count = 0;
     bool reprint = false;
-    LiquidCrystal& lcd;
-    DallasTemperature& sensors;
+    LiquidCrystal* lcd;
+    DallasTemperature* sensors;
 
   public:
-    Temperature(LiquidCrystal& lcd, DallasTemperature& sensors);
+    Temperature(LiquidCrystal* lcd, DallasTemperature* sensors);
     void temperatureDisplay();
     void setFirstTemp(); 
     void setSecondTemp();
