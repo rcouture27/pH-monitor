@@ -1,7 +1,12 @@
+#include <SparkFunESP8266WiFi.h>
+#include <SparkFunESP8266Client.h>
+#include <SparkFunESP8266Server.h>
+
+
 //#include <ArduinoWiFiServer.h>
 //#include <BearSSLHelpers.h>
 //#include <CertStoreBearSSL.h>
-#include <ESP8266WiFi.h>
+//#include <ESP8266WiFi.h>
 //#include <ESP8266WiFiAP.h>
 //#include <ESP8266WiFiGeneric.h>
 //#include <ESP8266WiFiGratuitous.h>
@@ -10,13 +15,13 @@
 //#include <ESP8266WiFiSTA.h>
 //#include <ESP8266WiFiType.h>
 
-#include <WiFiClient.h>
-#include <WiFiClientSecure.h>
+//#include <WiFiClient.h>
+//#include <WiFiClientSecure.h>
 //#include <WiFiClientSecureBearSSL.h>
-#include <WiFiServer.h>
-#include <WiFiServerSecure.h>
+////#include <WiFiServer.h>
+//#include <WiFiServerSecure.h>
 //#include <WiFiServerSecureBearSSL.h>
-#include <WiFiUdp.h>
+//#include <WiFiUdp.h>
 
 
 
@@ -28,8 +33,9 @@
 #include <DallasTemperature.h>
 #include <SoftwareSerial.h>
 //#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+//#include <ESP8266HTTPClient.h>
 #include "Temperature.h"
+#include "ESP8266WifiConnection.h"
 
 
 #define rx 9                                         //define what pin rx is going to be
@@ -53,6 +59,10 @@ String HTTP_METHOD = "GET";
 char   HOST_NAME[] = "71.232.236.213"; // hostname of web server:
 String PATH_NAME   = "/phs";
 
+/** wifi credentials */
+const char mySSID[] = "TP-Link-columbus";
+const char myPSK[] = "32-colubus";
+
 //SSD1306Wire display(0x3c, SDA, SCL);                  // ADDRESS, SDA, SCL  -  SDA and SCL usually populate automatically based on your board's pins_arduino.h
 
 /** initialize libraries */
@@ -60,20 +70,28 @@ String PATH_NAME   = "/phs";
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 SoftwareSerial myserial(rx, tx);
-HTTPClient http;
-WiFiClient client;
+//HTTPClient http;
+//WiFiClient client;
+//#include <SparkFunESP8266WiFi.h> // Include the ESP8266 AT library
 
 //const int rs = 19, en = 23, d4 = 27, d5 = 16, d6 = 17, d7 = 25;
 //LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 //Temperature temp(&lcd, &sensors);
 
+
+
 void setup(void) {
   myserial.begin(9600);
   Serial.begin(9600);
   sensors.begin();
+  
+  // connect to wifi network
+  ESP8266WifiConnection wifi("TP-Link-columbus", "32-columbus");
 
   // configure button
   pinMode(buttonPin, INPUT_PULLUP);
+
+
 
   // configure lcd
 //  lcd.begin(16, 2);
@@ -89,7 +107,7 @@ void setup(void) {
 void loop(void) {
 //  temp.temperatureDisplay();                          //  Display and update temperature as needed
 
-  readPh();
+  //readPh();
   
 /** configure wifiscan */
 //  WiFi.mode(WIFI_STA);
@@ -97,7 +115,7 @@ void loop(void) {
 
 //  wifiScan();
   
-//  delay(100);
+  delay(100);
 
 /** configure display */
 //  display.init();
@@ -145,11 +163,11 @@ void readPh() {
 }
 
 void testRequest() {
-  http.begin(client, "http://jsonplaceholder.typicode.com/users/1");
-  int httpCode = http.GET();
-  String payload = http.getString();
-  Serial.println(payload);
-  http.end();
+//  http.begin(client, "http://jsonplaceholder.typicode.com/users/1");
+//  int httpCode = http.GET();
+//  String payload = http.getString();
+//  Serial.println(payload);
+//  http.end();
 }
 
 
