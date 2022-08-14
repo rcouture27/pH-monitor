@@ -3,22 +3,14 @@
 #include "ESP8266WifiConnection.h"
 
 // constructor
-ESP8266WifiConnection::ESP8266WifiConnection(String mySSID, String myPSK){
-  this->mySSID = mySSID;
-  this->myPSK = myPSK;
+ESP8266WifiConnection::ESP8266WifiConnection(String ssid, String password){
+  this->ssid = ssid;
+  this->password = password;
 
   serialTrigger(F("Press any key to begin."));
-
-  // verifies communication with the WiFi shield, and sets it up.
-  initializeESP8266();
-
-  // connects to the defined WiFi network.
-  connectESP8266();
-
-  // prints the Shield's local IP and the network it's connected to.
-  displayConnectInfo();
 }
 
+// verifies communication with the WiFi shield, and sets it up.
 void ESP8266WifiConnection::initializeESP8266() {
   // esp8266.begin() verifies that the ESP8266 is operational
   // and sets it up for the rest of the sketch.
@@ -33,6 +25,7 @@ void ESP8266WifiConnection::initializeESP8266() {
   Serial.println(F("ESP8266 Shield Present"));
 }
 
+// connects to the defined WiFi network.
 void ESP8266WifiConnection::connectESP8266() {
   // The ESP8266 can be set to one of three modes:
   //  1 - ESP8266_MODE_STA - Station only
@@ -48,7 +41,7 @@ void ESP8266WifiConnection::connectESP8266() {
     if (retVal < 0)
     {
       Serial.println(F("Error setting mode."));
-      ESP8266WifiConnection::error(retVal);
+      error(retVal);
     }
   }
   Serial.println(F("Mode set to station"));
@@ -59,23 +52,23 @@ void ESP8266WifiConnection::connectESP8266() {
   if (retVal <= 0)
   {
     Serial.print(F("Connecting to "));
-    Serial.println(mySSID);
+    Serial.println(ssid);
     
     // On success connect() returns a value >0
     // On fail, the function will either return:
     //  -1: TIMEOUT - The library has a set 30s timeout
     //  -3: FAIL - Couldn't connect to network.
-    retVal = esp8266.connect(mySSID.c_str(), myPSK.c_str());
+    retVal = esp8266.connect(ssid.c_str(), password.c_str());
     
     if (retVal < 0)
     {
       Serial.println(F("Error connecting"));
-      ESP8266WifiConnection::error(retVal);
+      error(retVal);
     }
   }
 }
 
-
+// prints the Shield's local IP and the network it's connected to.
 void ESP8266WifiConnection::displayConnectInfo() {
   char connectedSSID[24];
   memset(connectedSSID, 0, 24);

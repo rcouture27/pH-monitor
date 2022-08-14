@@ -5,16 +5,17 @@
 
 class ESP8266WifiConnection {
   private:
-    String mySSID;
-    String myPSK;
+    String ssid;
+    String password;
+
+    void error(int errorCode);
+    void serialTrigger(String message);
 
   public:
-    ESP8266WifiConnection(String mySSID, String myPSK);
+    ESP8266WifiConnection(String ssid, String password);
     void initializeESP8266();
     void connectESP8266(); 
     void displayConnectInfo();
-    void error(int errorCode);
-    void serialTrigger(String message);
 };
 
 #endif

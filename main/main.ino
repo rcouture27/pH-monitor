@@ -1,45 +1,22 @@
+
 #include <SparkFunESP8266WiFi.h>
-#include <SparkFunESP8266Client.h>
-#include <SparkFunESP8266Server.h>
-
-
-//#include <ArduinoWiFiServer.h>
-//#include <BearSSLHelpers.h>
-//#include <CertStoreBearSSL.h>
-//#include <ESP8266WiFi.h>
-//#include <ESP8266WiFiAP.h>
-//#include <ESP8266WiFiGeneric.h>
-//#include <ESP8266WiFiGratuitous.h>
-//#include <ESP8266WiFiMulti.h>
-//#include <ESP8266WiFiScan.h>
-//#include <ESP8266WiFiSTA.h>
-//#include <ESP8266WiFiType.h>
-
-//#include <WiFiClient.h>
-//#include <WiFiClientSecure.h>
-//#include <WiFiClientSecureBearSSL.h>
-////#include <WiFiServer.h>
-//#include <WiFiServerSecure.h>
-//#include <WiFiServerSecureBearSSL.h>
-//#include <WiFiUdp.h>
-
-
-
-
-//#include <LiquidCrystal.h>
-//#include "SSD1306Wire.h" 
-
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <SoftwareSerial.h>
-//#include <ESP8266WiFi.h>
-//#include <ESP8266HTTPClient.h>
 #include "Temperature.h"
 #include "ESP8266WifiConnection.h"
 
+#define rx 9                                         
+#define tx 8                                         
+#define SCREEN_WIDTH 128                              // OLED display width, in pixels
+#define SCREEN_HEIGHT 32                              // OLED display height, in pixels
+#define OLED_RESET     -1                             // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_ADDRESS 0x3C                           // 0x3C for 128x32
 
-#define rx 9                                         //define what pin rx is going to be
-#define tx 8                                         //define what pin tx is going to be
 
 int count = 0;
 
@@ -60,42 +37,35 @@ char   HOST_NAME[] = "71.232.236.213"; // hostname of web server:
 String PATH_NAME   = "/phs";
 
 /** wifi credentials */
-const char mySSID[] = "TP-Link-columbus";
-const char myPSK[] = "32-colubus";
-
-//SSD1306Wire display(0x3c, SDA, SCL);                  // ADDRESS, SDA, SCL  -  SDA and SCL usually populate automatically based on your board's pins_arduino.h
+const String ssid = "TP-Link-columbus";
+const String password = "32-columbus";
 
 /** initialize libraries */
 #define ONE_WIRE_BUS 26
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 SoftwareSerial myserial(rx, tx);
-//HTTPClient http;
-//WiFiClient client;
-//#include <SparkFunESP8266WiFi.h> // Include the ESP8266 AT library
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 //const int rs = 19, en = 23, d4 = 27, d5 = 16, d6 = 17, d7 = 25;
 //LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 //Temperature temp(&lcd, &sensors);
-
-
 
 void setup(void) {
   myserial.begin(9600);
   Serial.begin(9600);
   sensors.begin();
   
-  // connect to wifi network
-  ESP8266WifiConnection wifi("TP-Link-columbus", "32-columbus");
+  setupDisplay();
+  
+  // connect to wifi if needed
+  ESP8266WifiConnection wifi(ssid, password);
+  wifi.initializeESP8266();
+  wifi.connectESP8266();
+  wifi.displayConnectInfo();
 
   // configure button
   pinMode(buttonPin, INPUT_PULLUP);
-
-
-
-  // configure lcd
-//  lcd.begin(16, 2);
-//  lcd.display();
 
   /** configure ph */
   inputstring.reserve(10);                            //set aside some bytes for receiving data from the PC
@@ -109,18 +79,10 @@ void loop(void) {
 
   //readPh();
   
-/** configure wifiscan */
-//  WiFi.mode(WIFI_STA);
-//  WiFi.disconnect();
-
-//  wifiScan();
-  
   delay(100);
 
 /** configure display */
-//  display.init();
-//  display.flipScreenVertically();
-//  display.setFont(ArialMT_Plain_10);
+
 }
 
 void serialEvent() {                                  // if the hardware serial port_0 receives a char
@@ -160,6 +122,28 @@ void readPh() {
     sensorstring = "";                                //clear the string
     sensor_string_complete = false;                   //reset the flag used to tell if we have received a completed string from the Atlas Scientific product
   }
+}
+
+void setupDisplay() {
+  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("OLED Display allocation failed"));
+  }
+
+  // Show initial display buffer contents on the screen --
+  // the library initializes this with an Adafruit splash screen.
+  display.display();
+  delay(2000); // Pause for 2 seconds
+
+  // Clear the buffer
+  display.clearDisplay();
+
+  // Draw a single pixel in white
+  display.drawPixel(10, 10, SSD1306_WHITE);
+
+  // Show the display buffer on the screen. You MUST call display() after
+  // drawing commands to make them visible on screen!
+  display.display();
+  delay(2000);
 }
 
 void testRequest() {
